@@ -6,9 +6,37 @@
         Prevented this recipe from saving
       %ul
         - @recipe.errors.full_messages.each do |msg|
-          %li = msg
+          %li= msg
   .panel-body
     = f.input :title, input_html: { class: 'form-control' }
     = f.input :description, input_html: { class: 'form-control' }
+    = f.file_field :picture, accept: 'image/jpeg,image/gif,image/png', input_html: { class: 'form-control' }
+
+    .row
+      .col-md-6
+        %h3 Ingredients
+        #ingredients
+          = f.simple_fields_for :ingredients do |ingredient|
+            = render 'ingredient_fields', f: ingredient
+          .links
+            = link_to_add_association 'Add Ingredient', f, :ingredients, class: "btn btn-default add-button"
+
+      .col-md-6
+        %h3 Directions
+        #directions
+          = f.simple_fields_for :directions do |direction|
+            = render 'direction_fields', f: direction
+          .links
+            = link_to_add_association 'Add Direction', f, :directions, class: "btn btn-default add-button"
 
   = f.button :submit, class: "btn btn-primary"
+
+
+
+:javascript
+  $('#new_recipe').bind('change', function() {
+    var size_in_megabytes = this.files[0].size/1024/1024;
+    if (size_in_megabytes > 3) {
+      alert('Maximum file size is 3MB. Please choose a smaller file.');
+    }
+  });
